@@ -1,74 +1,30 @@
-import {
-  ParsedPatientResult,
-  PatientData,
-} from "./types";
+import { PatientProfile } from "./types";
 
-export function parsePatient(text: string): ParsedPatientResult {
+export function parsePatient(text: string): Partial<PatientProfile> {
   const lower = text.toLowerCase();
 
-  const patient: PatientData = {
-    gender: "unknown",
-    problems: [],
-  };
+  const patient: Partial<PatientProfile> = {};
 
-  const age = lower.match(/(\d{1,3})\s*(years?|yrs?|year)/);
+  if (lower.includes("stroke"))
+    patient.diagnosis = "Stroke";
 
-  if (age) {
-    patient.age = Number(age[1]);
-  }
+  if (lower.includes("parkinson"))
+    patient.diagnosis = "Parkinson's Disease";
 
-  if (lower.includes("male")) {
-    patient.gender = "male";
-  }
+  if (lower.includes("cerebral palsy"))
+    patient.diagnosis = "Cerebral Palsy";
 
-  if (lower.includes("female")) {
-    patient.gender = "female";
-  }
+  if (lower.includes("right"))
+    patient.affectedSide = "Right";
 
-  const diagnoses = [
-    "stroke",
-    "parkinson",
-    "cerebral palsy",
-    "spinal cord injury",
-    "traumatic brain injury",
-    "autism",
-    "down syndrome",
-    "multiple sclerosis",
-    "guillain barre syndrome",
-    "amputation",
-  ];
+  if (lower.includes("left"))
+    patient.affectedSide = "Left";
 
-  for (const diagnosis of diagnoses) {
-    if (lower.includes(diagnosis)) {
-      patient.diagnosis = diagnosis;
-      break;
-    }
-  }
+  if (lower.includes("hand"))
+    patient.chiefComplaint = "Hand Function";
 
-  const lines = text.split("\n");
+  if (lower.includes("shoulder"))
+    patient.chiefComplaint = "Shoulder Problem";
 
-  for (const line of lines) {
-    const value = line.trim();
-
-    if (value.length < 3) continue;
-
-    if (
-      value.toLowerCase().includes("difficulty") ||
-      value.toLowerCase().includes("unable") ||
-      value.toLowerCase().includes("pain") ||
-      value.toLowerCase().includes("weakness") ||
-      value.toLowerCase().includes("dependent")
-    ) {
-      patient.problems.push({
-        id: crypto.randomUUID(),
-        title: value,
-      });
-    }
-  }
-
-  return {
-    success: true,
-    patient,
-    rawText: text,
-  };
+  return patient;
 }

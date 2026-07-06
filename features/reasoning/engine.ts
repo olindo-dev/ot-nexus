@@ -1,20 +1,24 @@
 import { ClinicalReasoningResult } from "./types";
 import { detectPriority } from "./priority";
-import { PatientProblem } from "../patient";
+import { PatientProfile } from "../patient";
 
 export function buildClinicalReasoning(
-  problems: PatientProblem[]
+  patient: Partial<PatientProfile>
 ): ClinicalReasoningResult {
-  const result = problems.map((problem) => ({
-    id: problem.id,
-    title: problem.title,
-    category: problem.category ?? "General",
-    priority: detectPriority(problem.title),
-    reason: `Priority assigned based on detected clinical keywords.`,
-  }));
+  const problems = [];
+
+  if (patient.chiefComplaint) {
+    problems.push({
+      id: crypto.randomUUID(),
+      title: patient.chiefComplaint,
+      category: "Occupational Performance",
+      priority: detectPriority(patient.chiefComplaint),
+      reason: "Generated from patient's chief complaint.",
+    });
+  }
 
   return {
-    problems: result,
-    summary: `${result.length} clinical problem(s) identified.`,
+    problems,
+    summary: `${problems.length} clinical problem(s) identified.`,
   };
 }

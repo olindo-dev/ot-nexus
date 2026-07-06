@@ -1,39 +1,25 @@
-export type Gender =
-  | "male"
-  | "female"
-  | "other"
-  | "unknown";
-
-export interface PatientProblem {
-  id: string;
-
-  title: string;
-
-  severity?: "mild" | "moderate" | "severe";
-
-  category?: string;
-}
-
-export interface PatientData {
+export interface PatientProfile {
   name?: string;
 
   age?: number;
 
-  gender: Gender;
+  gender?: string;
 
   diagnosis?: string;
 
+  affectedSide?: string;
+
+  condition?: string;
+
+  occupation?: string;
+
   chiefComplaint?: string;
 
-  medicalHistory?: string[];
+  goals: string[];
 
-  problems: PatientProblem[];
-}
+  assessments: string[];
 
-export interface ParsedPatientResult {
-  success: boolean;
+  interventions: string[];
 
-  patient: PatientData;
-
-  rawText: string;
+  notes: string[];
 }

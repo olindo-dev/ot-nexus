@@ -1,5 +1,5 @@
-export * from "./types";
 export * from "./builder";
+export * from "./context";
 export * from "./personality";
 export * from "./rules";
-export * from "./context";
+export * from "./types";

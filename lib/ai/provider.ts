@@ -1,4 +1,3 @@
-import { SYSTEM_PROMPT } from "./system-prompt";
 import { ProviderName } from "./types";
 
 import {
@@ -10,6 +9,7 @@ import {
 } from "@/services/ai";
 
 import { humanize } from "@/features/humanizer";
+import { buildPrompt } from "@/features/prompt";
 
 class AIManager {
   private provider: ProviderName = "gemini";
@@ -20,16 +20,7 @@ class AIManager {
 
   async ask(message: string): Promise<string> {
     const request = {
-      messages: [
-        {
-          role: "system" as const,
-          content: SYSTEM_PROMPT,
-        },
-        {
-          role: "user" as const,
-          content: message,
-        },
-      ],
+      messages: buildPrompt(message),
     };
 
     let response = "";
