@@ -1,31 +1,44 @@
-import { extractTags } from "./extractor";
-import { saveMemory, getMemory } from "./storage";
+import { getMemory, setMemory } from "./storage";
 import { summarize } from "./summary";
-import { MemoryContext } from "./types";
+import { ConversationMessage } from "./types";
 
 export function remember(
-  userMessage: string,
-  assistantMessage: string
-): MemoryContext {
-  saveMemory({
-    id: crypto.randomUUID(),
-    timestamp: Date.now(),
-
-    userMessage,
-    assistantMessage,
-
-    summary: assistantMessage,
-
-    tags: extractTags(userMessage),
-  });
-
+  role: "system" | "user" | "assistant",
+  content: string
+) {
   const memory = getMemory();
 
-  return {
-    recentConversation: summarize(memory),
-    summary: memory
-      .slice(-5)
-      .map((m) => m.summary)
-      .join("\n"),
+  const message: ConversationMessage = {
+    id: crypto.randomUUID(),
+    role,
+    content,
+    timestamp: Date.now(),
   };
+
+  memory.messages.push(message);
+
+  // Keep only the latest 100 messages in active memory
+  if (memory.messages.length > 100) {
+    memory.messages = memory.messages.slice(-100);
+  }
+
+  memory.summary = summarize(memory.messages);
+
+  setMemory(memory);
+}
+
+export function getConversationContext(): string {
+  const memory = getMemory();
+
+  const mode = memory.context.mode;
+  const patient = memory.context.patientId ?? "None";
+  const summary = memory.summary?.text ?? "";
+
+  return `
+Current Mode: ${mode}
+Current Patient: ${patient}
+
+Conversation Summary:
+${summary}
+`.trim();
 }

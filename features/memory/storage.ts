@@ -1,20 +1,33 @@
-import { getSession } from "./session";
-import { MemoryItem } from "./types";
+import { ConversationMemory } from "./types";
 
-export function saveMemory(item: MemoryItem) {
-  const session = getSession();
+let memory: ConversationMemory = {
+  context: {
+    sessionId: crypto.randomUUID(),
+    mode: "general",
+  },
 
-  session.history.push(item);
+  messages: [],
 
-  if (session.history.length > 20) {
-    session.history.shift();
-  }
+  summary: undefined,
+};
+
+export function getMemory(): ConversationMemory {
+  return memory;
 }
 
-export function getMemory() {
-  return getSession().history;
+export function setMemory(newMemory: ConversationMemory): void {
+  memory = newMemory;
 }
 
-export function clearMemory() {
-  getSession().history.length = 0;
+export function clearMemory(): void {
+  memory = {
+    context: {
+      sessionId: crypto.randomUUID(),
+      mode: "general",
+    },
+
+    messages: [],
+
+    summary: undefined,
+  };
 }

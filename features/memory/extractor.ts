@@ -1,21 +1,51 @@
-export function extractTags(message: string): string[] {
-  const text = message.toLowerCase();
+export function extractKeywords(text: string): string[] {
+  const words = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(/\s+/)
+    .filter(Boolean);
 
-  const tags: string[] = [];
+  const stopWords = new Set([
+    "the",
+    "is",
+    "are",
+    "a",
+    "an",
+    "of",
+    "to",
+    "and",
+    "or",
+    "in",
+    "on",
+    "for",
+    "with",
+    "at",
+    "by",
+    "from",
+    "this",
+    "that",
+    "these",
+    "those",
+    "what",
+    "how",
+    "why",
+    "when",
+    "where",
+    "who",
+    "which",
+    "i",
+    "you",
+    "he",
+    "she",
+    "they",
+    "we",
+    "it",
+    "my",
+    "your",
+    "his",
+    "her",
+    "their",
+  ]);
 
-  if (text.includes("stroke")) tags.push("stroke");
-
-  if (text.includes("cp")) tags.push("cerebral palsy");
-
-  if (text.includes("parkinson")) tags.push("parkinson");
-
-  if (text.includes("hand")) tags.push("hand");
-
-  if (text.includes("shoulder")) tags.push("shoulder");
-
-  if (text.includes("goal")) tags.push("goal");
-
-  if (text.includes("assessment")) tags.push("assessment");
-
-  return tags;
+  return [...new Set(words.filter((word) => !stopWords.has(word)))];
 }

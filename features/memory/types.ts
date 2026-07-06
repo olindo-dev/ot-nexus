@@ -1,23 +1,29 @@
-export interface MemoryItem {
+export type MemoryMode =
+  | "general"
+  | "patient"
+  | "research"
+  | "viva";
+
+export interface ConversationMessage {
   id: string;
+  role: "system" | "user" | "assistant";
+  content: string;
   timestamp: number;
-
-  userMessage: string;
-  assistantMessage: string;
-
-  summary: string;
-
-  tags: string[];
 }
 
-export interface ConversationMemory {
-  sessionId: string;
-
-  history: MemoryItem[];
+export interface ConversationSummary {
+  text: string;
+  updatedAt: number;
 }
 
 export interface MemoryContext {
-  recentConversation: string;
+  sessionId: string;
+  mode: MemoryMode;
+  patientId?: string;
+}
 
-  summary: string;
+export interface ConversationMemory {
+  context: MemoryContext;
+  messages: ConversationMessage[];
+  summary?: ConversationSummary;
 }
